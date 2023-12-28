@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech Converter</title>
+    <style>
+                body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: space-between;
+        }
+        header, footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        main {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #textToSpeechForm {
+            width: 100%;
+            max-width: 400px;
+        }
+        textarea {
+            width: 100%;
+            padding: 0.5rem;
+        }
+        button {
+            width: 100%;
+            padding: 0.7rem;
+            margin-top: 0.5rem;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        audio {
+            margin-top: 1rem;
+        }
+
+        /* Additional styles for dropdowns */
+        select {
+            width: 100%; /* Match width of other form elements */
+            padding: 0.5rem;
+            margin-bottom: 10px; /* Space between dropdowns and other elements */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px; /* Space between label and its input/select */
+        }
+
+        /* Optionally, add a class to group each form field for better alignment */
+        .form-group {
+            margin-bottom: 15px; /* Space between each form group */
+            max-width: 400px;
+        }
+        .audio-converter-iframe {
+            max-width: 400px;
+            width: 100%;
+            border: 2px solid #333; /* A border that matches your header/footer color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* A subtle shadow for depth */
+            margin-top: 20px; /* Space above the iframe */
+            border-radius: 10px; /* Rounded corners for a modern look */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Text to Speech Converter</h1>
+    </header>
+
+    <main>
+        <form id="textToSpeechForm">
+            <div class="form-group">
+                <label for="voiceSelect">Voice:</label>
+                    <input style="height: 30px; width: 400px;" list="voiceOptions" id="voiceSelect" name="voiceInput" placeholder="Type or select a voice" />
+
+                    <datalist id="voiceOptions">
+                        <option value="Joanna">Joanna</option>
+                        <option value="Aditi">Aditi</option>
+                        <option value="Liam">Liam</option>
+
+                        <!-- Add all other voice options here -->
+                        <!-- ... -->
+                    </datalist>
+
+            </div>
+            <div class="form-group">
+                <label for="engineSelect">Engine:</label>
+                <select id="engineSelect">
+                <option value="neural">Neural</option>
+                <option value="standard">Standard</option>
+                </select>
+
+            </div>
+            <div class="form-group"><textarea id="textInput" placeholder="Enter text here" required></textarea></div>
+
+            <button type="submit">Convert to Speech</button>
+        </form>
+        <audio id="audioResult" controls hidden></audio>
+        <a href="#" id="downloadLink" style="display: none;">Download Audio</a>
+        <iframe id="myIframe" src="https://services.3cx.com/audio-converter" class="audio-converter-iframe" width="100%" height="400"></iframe>
+        <div class="form-group"><p>Available voices are: <br> [Lotte, Maxim, Ayanda, Salli, Ola, Arthur, Ida, Tomoko, Remi, Geraint, Miguel, Elin, Lisa, Giorgio, Marlene, Ines, Kajal, Zhiyu, Zeina, Suvi, Karl, Gwyneth, Joanna, Lucia, Cristiano, Astrid, Andres, Vicki, Mia, Vitoria, Bianca, Chantal, Raveena, Daniel, Amy, Liam, Ruth, Kevin, Brian, Russell, Aria, Matthew, Aditi, Zayd, Dora, Enrique, Hans, Danielle, Hiujin, Carmen, Sofie, Gregory, Ivy, Ewa, Maja, Gabrielle, Nicole, Filiz, Camila, Jacek, Thiago, Justin, Celine, Kazuha, Kendra, Arlet, Ricardo, Mads, Hannah, Mathieu, Lea, Sergio, Hala, Tatyana, Penelope, Naja, Olivia, Ruben, Laura, Takumi, Mizuki, Carla, Conchita, Jan, Kimberly, Liv, Adriano, Lupe, Joey, Pedro, Seoyeon, Emma, Niamh, Stephen] </p>
+         </div>
+    </main>
+
+    <footer>
+        <p>© 2023 Text to Speech Converter. All rights reserved.</p>
+    </footer>
+
+    <script>
+      document.getElementById('textToSpeechForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = document.getElementById('textInput').value;
+            const engine = document.getElementById('engineSelect').value;
+            const voice = document.getElementById('voiceSelect').value
+            fetch('/convert-to-speech', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: text, engine: engine, voiceId: voice })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Server responded with an error!');
+                    });
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const audioUrl = URL.createObjectURL(blob);
+                const audioElement = document.getElementById('audioResult');
+                audioElement.src = audioUrl;
+                audioElement.hidden = false;
+                audioElement.play();
+                const downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = audioUrl;
+                downloadLink.download = 'converted_audio.mp3'; // You can specify the filename here
+                downloadLink.style.display = 'block'; // Show the download link
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Voice ID not available. Please select a different voice.'); // Display error message
+            });
+        });
+
+        document.getElementById('downloadLink').addEventListener('dragstart', function(event) {
+        event.dataTransfer.setData('text/plain', event.target.href);
+    });
+
+    // Assuming you have an iframe with id 'myIframe'
+
+
+        
+    </script>
+</body>
+</html>

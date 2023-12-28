@@ -1,0 +1,20 @@
+{
+  "name": "amazonpolly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1522.0",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "fluent-ffmpeg": "^2.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
