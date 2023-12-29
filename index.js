@@ -1,9 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const AWS = require('aws-sdk');
-AWS.config.loadFromPath('./config.json');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegStatic = require('ffmpeg-static');
+AWS.config.loadFromPath('./config.json');
+ffmpeg.setFfmpegPath(ffmpegStatic);
+
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,14 +17,16 @@ const availableVoices=['Lotte', 'Maxim', 'Ayanda', 'Salli', 'Ola', 'Arthur', 'Id
 
 app.post('/convert-to-speech', (req, res) => {
     const text = req.body.text;
-    const engine = req.body.engine || 'neural'; // Default to 'standard' if not provided
+    const engine = req.body.engine || 'neural';
     const voiceId = req.body.voiceId || 'Joanna'; 
+
     if (!availableVoices.includes(voiceId)) {
         return res.status(400).json({ error: 'Voice ID not available.' });
     }
+
     const params = {
         Text: text,
-        OutputFormat: 'mp3',
+        OutputFormat: 'mp3', // Polly currently only supports mp3 for neural engine
         VoiceId: voiceId,
         Engine: engine
     };
@@ -33,8 +37,26 @@ app.post('/convert-to-speech', (req, res) => {
             res.status(500).send('Error');
         } else if (data) {
             if (data.AudioStream instanceof Buffer) {
-                res.set('Content-Type', 'audio/mpeg');
-                res.send(data.AudioStream);
+                // Convert MP3 to WAV
+                const stream = require('stream');
+                const pass = new stream.PassThrough();
+                pass.end(data.AudioStream);
+
+                res.set({
+                    'Content-Type': 'audio/wav',
+                    'Content-Disposition': 'attachment; filename="speech.wav"'
+                });
+                
+                ffmpeg(pass)
+                    .audioChannels(1)      // Mono channel
+                    .audioFrequency(8000)  // 8 kHz bit rate
+                    .audioCodec('pcm_s16le')  // 16-bit sampling, little-endian
+                    .format('wav')
+                    .on('error', (err) => {
+                        console.error('An error occurred: ', err.message);
+                        res.status(500).send('Error during conversion');
+                    })
+                    .pipe(res, { end: true });
             }
         }
     });

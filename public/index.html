@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Text to Speech Converter</title>
     <style>
                 body {
@@ -24,7 +25,7 @@
         }
         main {
             flex: 1;
-            padding: 2rem;
+            /* padding: 2rem; */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -38,8 +39,9 @@
             width: 100%;
             padding: 0.5rem;
         }
-        button {
+        /* button {
             width: 100%;
+            border-radius: 0.2rem;
             padding: 0.7rem;
             margin-top: 0.5rem;
             background-color: blue;
@@ -49,6 +51,26 @@
         }
         button:hover {
             background-color: darkblue;
+        } */
+        button {
+            width: 33%;
+            border-radius: 0.2rem;
+            padding: 0.7rem;
+            margin-top: 0.5rem;
+            background-color: white; /* White background */
+            color: rgb(92, 92, 92); /* Dark grey text */
+            border: 2px solid rgb(92, 92, 92);
+            cursor: pointer;
+            transition: color 0.3s; /* Smooth transition for color change */
+        }
+
+        button:hover {
+            color: black; /* Text color changes to black on hover */
+            background-color: white; /* Keeps background color white on hover */
+            border-color: #000000;
+        }
+        .button-container {
+             text-align: center;
         }
         audio {
             margin-top: 1rem;
@@ -112,9 +134,12 @@
         }
         .radio-button-card {
             border: 2px solid #ced4da;
-            border-radius: 0.5rem;
+            border-radius: 0.2rem;
             padding: 0px;
             
+        }
+        .radio-button-card:hover {
+            background-color: rgb(209, 233, 255);
         }
         .radio-button-card input[type="radio"] {
             display: none;
@@ -133,7 +158,7 @@
             content: '';
             position: absolute;
             left: 0.5em;
-            top: 27%;
+            top: 1.75rem;
             transform: translateY(-50%);
             width: 1em;
             height: 1em;
@@ -142,18 +167,18 @@
             background: #fff;
         }
         .radio-button-card input[type="radio"]:checked + label:before {
-            border-color: #0d6efd;
+            border-color: #74acff;
         }
         .radio-button-card input[type="radio"]:checked + label:after {
             content: '';
             position: absolute;
             left: 0.75em;
-            top: 27%;
+            top: 1.75rem;
             transform: translateY(-50%);
             width: 0.5em;
             height: 0.5em;
             border-radius: 50%;
-            background: #0d6efd;
+            background: #74acff;
         }
         .radio-button-card .radio-title {
             font-size: 1rem;
@@ -163,6 +188,64 @@
             font-size: 0.875rem;
             color: #6c757d;
         }
+
+        .collapsible {
+            cursor: pointer;
+            padding-top: 1em;
+            padding-bottom: 1em;
+            padding-left: 1rem;
+            border-top: 1px solid rgb(233, 232, 232);
+            margin-top: 1em;
+            margin-left: -1rem;
+            margin-right: -1rem;
+            background-color: #ffffff;
+            color: rgb(97, 97, 97);
+            text-align: left;
+            outline: none;
+            transition: background-color 0.4s;
+            }
+        
+        .collapsible:hover {
+            color: #000000;
+            }
+
+        .content {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+        #expanded {
+            border: none;
+        }
+        .arrow {
+            display: inline-block;
+            margin-right: 5px;
+            transition: transform 0.4s;
+        }
+        .collapsible.active .arrow {
+            transform: rotate(90deg); /* Rotates the arrow to point downwards */
+        }
+        .center-container {
+            text-align: center;
+        }
+        .card {
+            border-radius: 0.2em;
+        }
+        .card-body {
+            padding-bottom: 0%;
+        }
+        #cardTitle {
+            border-bottom: 1px solid rgb(201, 201, 201);
+            margin-bottom: 1rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+            margin-top: -1rem;
+            padding-top: 1.5rem;
+            padding-left: 1rem;
+            padding-bottom: 1rem;
+            background-color: #fdfdfd;
+        }
+        
     </style>
 </head>
 <body>
@@ -172,9 +255,10 @@
 
     <main>
         <div class="container py-5">
-            <h2 class="mb-4">Step 1: convert your text </h2>
+            
             <div class="card">
                 <div class="card-body">
+                    <div id="cardTitle"><h4>Placeholder for a good title</h4></div>
                     <form id="textToSpeechForm">
                         <div class="mb-3">
                             <label class="form-label d-flex justify-content-between">
@@ -231,17 +315,31 @@
                                 <span>Input text </span>
                             </label>
                             <textarea class="form-control" id="textInput" rows="4">Hello! I am CyberSquad voice generator. I can read any text you type here.</textarea>
-                            <div class="form-text text-muted">59 characters used</div>
+                            <div class="form-text text-muted" id="charCount">74 characters used</div>
                         </div>
-                        <button type="submit">Convert to Speech</button>
-                        <audio id="audioResult" controls hidden></audio>
-                        <a href="#" id="downloadLink" style="display: none;">Download Audio</a>
+                        <div class="button-container">
+                            <button type="submit"><i class="fas fa-download"></i><span>    </span>Convert to Speech</button>
+                        </div>
+                        <div class="center-container">
+                            <audio id="audioResult" controls hidden></audio>
+                            <a href="#" id="downloadLink" style="display: none;">Download Audio</a>
+                        </div>
                         <!-- The rest of the form remains the same -->
                     </form>
+                    <div class="collapsible">
+                        <span class="arrow">&#9654;</span><span>  Convert your own audio to make it compatible with 3cx</span>
+                    </div>
+                    <div class="content">
+                       <!-- <div class="container py-5"> -->
+                            <div class="card" id="expanded">
+                                <iframe id="myIframe" src="https://services.3cx.com/audio-converter" class="audio-converter-iframe"></iframe>
+                             <!-- </div> -->
+                        </div>
+                    </div>
                 </div>
             </div>
+            
         </div>
-        <div class="container py-5"><h2 class="mb-4">Step2: download audio and convert to 3cx compatible audio file</h2><div class="card"><iframe id="myIframe" src="https://services.3cx.com/audio-converter" class="audio-converter-iframe"></iframe></div></div>
         
     </main>
 
@@ -307,7 +405,7 @@
                 audioElement.play();
                 const downloadLink = document.getElementById('downloadLink');
                 downloadLink.href = audioUrl;
-                downloadLink.download = 'converted_audio.mp3'; // You can specify the filename here
+                downloadLink.download = 'converted.wav'; // You can specify the filename here
                 downloadLink.style.display = 'block'; // Show the download link
             })
             .catch(error => {
@@ -319,10 +417,52 @@
         document.getElementById('downloadLink').addEventListener('dragstart', function(event) {
         event.dataTransfer.setData('text/plain', event.target.href);
     });
+    var coll = document.querySelector(".collapsible");
+    var content = document.querySelector(".content");
 
+    coll.addEventListener("click", function() {
+        this.classList.toggle("active");
+        var display = content.style.display;
+        content.style.display = display === "block" ? "none" : "block";
+    });
     // Assuming you have an iframe with id 'myIframe'
+    function updateCharCount() {
+        var textLength = document.getElementById('textInput').value.length;
+        document.getElementById('charCount').textContent = textLength + " characters used";
+    }
 
+    // Event listener for textarea input
+    document.getElementById('textInput').addEventListener('input', updateCharCount);
 
+    // Update character count on page load
+    document.addEventListener('DOMContentLoaded', updateCharCount);
+    document.addEventListener('DOMContentLoaded', function() {
+          var radioButtons = document.querySelectorAll('.radio-button-card input[type="radio"]');
+
+          // Function to update background and border color
+          function updateCardStyles() {
+              // Reset styles for all cards
+              document.querySelectorAll('.radio-button-card').forEach(function(card) {
+                  card.style.backgroundColor = '';
+                  card.style.borderColor = '';
+              });
+
+              // Apply styles to the parent card of the checked radio
+              document.querySelectorAll('.radio-button-card input[type="radio"]:checked').forEach(function(radio) {
+                  var parentCard = radio.closest('.radio-button-card');
+                  parentCard.style.backgroundColor = 'rgb(209, 233, 255)';
+                  parentCard.style.borderColor = '#74acff';
+              });
+          }
+
+          // Set initial styles
+          updateCardStyles();
+
+          // Attach event listeners to radio buttons
+          radioButtons.forEach(function(radio) {
+              radio.addEventListener('change', updateCardStyles);
+          });
+      });
         
     </script>
 </body>
