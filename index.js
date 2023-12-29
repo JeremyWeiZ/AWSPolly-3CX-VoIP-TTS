@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const AWS = require('aws-sdk');
 AWS.config.loadFromPath('./config.json');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegStatic = require('ffmpeg-static');
 
 const app = express();
 app.use(bodyParser.json());

@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <title>Text to Speech Converter</title>
     <style>
                 body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
@@ -30,7 +32,7 @@
         }
         #textToSpeechForm {
             width: 100%;
-            max-width: 400px;
+            
         }
         textarea {
             width: 100%;
@@ -67,56 +69,180 @@
         /* Optionally, add a class to group each form field for better alignment */
         .form-group {
             margin-bottom: 15px; /* Space between each form group */
-            max-width: 400px;
+            /* max-width: 400px; */
         }
         .audio-converter-iframe {
-            max-width: 400px;
-            width: 100%;
-            border: 2px solid #333; /* A border that matches your header/footer color */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* A subtle shadow for depth */
-            margin-top: 20px; /* Space above the iframe */
-            border-radius: 10px; /* Rounded corners for a modern look */
+            min-height: 400px;
+            /* max-width: 400px; */
+            /* height: fit-content;
+            width: 100%; */
+            /* border: 2px solid #333; A border that matches your header/footer color */
+            
+            /* margin-top: 20px; Space above the iframe */
+            /* border-radius: 10px; Rounded corners for a modern look */
+            /* flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; */
+        }
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .form-check-input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .bg-light {
+            background-color: #f8f9fa!important;
+        }
+        .text-muted {
+            color: #6c757d!important;
+        }
+        .radio-button-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .radio-button-card {
+            border: 2px solid #ced4da;
+            border-radius: 0.5rem;
+            padding: 0px;
+            
+        }
+        .radio-button-card input[type="radio"] {
+            display: none;
+        }
+        .radio-button-card input[type="radio"] + label {
+            cursor: pointer;
+            padding-left: 2em;
+            padding-top: 1em;
+            padding-bottom: 1em;
+            padding-right: 1em;
+            position: relative;
+            display: block;
+            text-align: left;
+        }
+        .radio-button-card input[type="radio"] + label:before {
+            content: '';
+            position: absolute;
+            left: 0.5em;
+            top: 27%;
+            transform: translateY(-50%);
+            width: 1em;
+            height: 1em;
+            border: 2px solid #adb5bd;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .radio-button-card input[type="radio"]:checked + label:before {
+            border-color: #0d6efd;
+        }
+        .radio-button-card input[type="radio"]:checked + label:after {
+            content: '';
+            position: absolute;
+            left: 0.75em;
+            top: 27%;
+            transform: translateY(-50%);
+            width: 0.5em;
+            height: 0.5em;
+            border-radius: 50%;
+            background: #0d6efd;
+        }
+        .radio-button-card .radio-title {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .radio-button-card .radio-description {
+            font-size: 0.875rem;
+            color: #6c757d;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Text to Speech Converter</h1>
+        <h2>Text to Speech Converter</h2>
     </header>
 
     <main>
-        <form id="textToSpeechForm">
-            <div class="form-group">
-                <label for="voiceSelect">Voice:</label>
-                    <input style="height: 30px; width: 400px;" list="voiceOptions" id="voiceSelect" name="voiceInput" placeholder="Type or select a voice" />
-
-                    <datalist id="voiceOptions">
-                        <option value="Joanna">Joanna</option>
-                        <option value="Aditi">Aditi</option>
-                        <option value="Liam">Liam</option>
-
-                        <!-- Add all other voice options here -->
-                        <!-- ... -->
-                    </datalist>
-
+        <div class="container py-5">
+            <h2 class="mb-4">Step 1: convert your text </h2>
+            <div class="card">
+                <div class="card-body">
+                    <form id="textToSpeechForm">
+                        <div class="mb-3">
+                            <label class="form-label d-flex justify-content-between">
+                                <span>Engine</span>
+                            </label>
+                            <div class="radio-button-group">
+                                <div class="radio-button-card">
+                                    <input type="radio" id="neuralOption" name="engineOptions" value="neural" checked>
+                                    <label for="neuralOption">
+                                        <div class="radio-title">Neural</div>
+                                        <div class="radio-description">Produces more natural and human-like speech than Standard Engine.</div>
+                                    </label>
+                                </div>
+                                <!-- <div class="radio-button-card">
+                                    <input type="radio" id="longFormOption" name="engineOptions" value="long-form">
+                                    <label for="longFormOption">
+                                        <div class="radio-title">Long-Form</div>
+                                        <div class="radio-description">Produces the most natural sounding speech for longer content.</div>
+                                    </label>
+                                </div> -->
+                                <div class="radio-button-card">
+                                    <input type="radio" id="standardOption" name="engineOptions" value="standard">
+                                    <label for="standardOption">
+                                        <div class="radio-title">Standard</div>
+                                        <div class="radio-description">Produces natural-sounding speech.</div>
+                                        
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                      <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label d-flex justify-content-between">
+                                    <span>Language </span>
+                                </label>
+                                <select class="form-select half-width" aria-label="Language select" id="languageSelect">
+                                    <option selected>English, Australian</option>
+                                    <option selected>English, British</option>
+                                    <option selected>English, Indian</option>
+                                    <option selected>English, Kiwi</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex justify-content-between">
+                                    <span>Voice </span>
+                                </label>
+                                <select class="form-select half-width" aria-label="Voice select" id="voiceSelect" name="voiceInput">
+                                    <option selected value="Aria">Aria, Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label d-flex justify-content-between">
+                                <span>Input text </span>
+                            </label>
+                            <textarea class="form-control" id="textInput" rows="4">Hello! I am CyberSquad voice generator. I can read any text you type here.</textarea>
+                            <div class="form-text text-muted">59 characters used</div>
+                        </div>
+                        <button type="submit">Convert to Speech</button>
+                        <audio id="audioResult" controls hidden></audio>
+                        <a href="#" id="downloadLink" style="display: none;">Download Audio</a>
+                        <!-- The rest of the form remains the same -->
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="engineSelect">Engine:</label>
-                <select id="engineSelect">
-                <option value="neural">Neural</option>
-                <option value="standard">Standard</option>
-                </select>
-
-            </div>
-            <div class="form-group"><textarea id="textInput" placeholder="Enter text here" required></textarea></div>
-
-            <button type="submit">Convert to Speech</button>
-        </form>
-        <audio id="audioResult" controls hidden></audio>
-        <a href="#" id="downloadLink" style="display: none;">Download Audio</a>
-        <iframe id="myIframe" src="https://services.3cx.com/audio-converter" class="audio-converter-iframe" width="100%" height="400"></iframe>
-        <div class="form-group"><p>Available voices are: <br> [Lotte, Maxim, Ayanda, Salli, Ola, Arthur, Ida, Tomoko, Remi, Geraint, Miguel, Elin, Lisa, Giorgio, Marlene, Ines, Kajal, Zhiyu, Zeina, Suvi, Karl, Gwyneth, Joanna, Lucia, Cristiano, Astrid, Andres, Vicki, Mia, Vitoria, Bianca, Chantal, Raveena, Daniel, Amy, Liam, Ruth, Kevin, Brian, Russell, Aria, Matthew, Aditi, Zayd, Dora, Enrique, Hans, Danielle, Hiujin, Carmen, Sofie, Gregory, Ivy, Ewa, Maja, Gabrielle, Nicole, Filiz, Camila, Jacek, Thiago, Justin, Celine, Kazuha, Kendra, Arlet, Ricardo, Mads, Hannah, Mathieu, Lea, Sergio, Hala, Tatyana, Penelope, Naja, Olivia, Ruben, Laura, Takumi, Mizuki, Carla, Conchita, Jan, Kimberly, Liv, Adriano, Lupe, Joey, Pedro, Seoyeon, Emma, Niamh, Stephen] </p>
-         </div>
+        </div>
+        <div class="container py-5"><h2 class="mb-4">Step2: download audio and convert to 3cx compatible audio file</h2><div class="card"><iframe id="myIframe" src="https://services.3cx.com/audio-converter" class="audio-converter-iframe"></iframe></div></div>
+        
     </main>
 
     <footer>
@@ -124,11 +250,40 @@
     </footer>
 
     <script>
+    document.getElementById('languageSelect').addEventListener('change', function() {
+    var language = this.value;
+    var voiceSelect = document.getElementById('voiceSelect');
+
+    // Clear existing options
+    voiceSelect.innerHTML = '';
+
+    // Define voices for each language
+    var voices = {
+        'English, Indian': ['Kajal, Female'],
+        'English, US': ['Joanna, Female', 'Matthew, Male'],
+        'English, Australian': ['Olivia, Female'],
+        'English, Kiwi': ['Aria, Female'],
+        'English, British': ['Emma, Female','Arthur, Male'],
+        // Add more languages and voices as needed
+    };
+
+    // Add new options based on selected language
+    voices[language].forEach(function(voice) {
+        var option = document.createElement('option');
+        var voiceName = voice.split(',')[0]; // Split the string and take the first part
+        option.textContent = voice;
+        option.value = voiceName; // Set value to the content before the comma
+        voiceSelect.appendChild(option);
+    });
+    });
+
+
       document.getElementById('textToSpeechForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const text = document.getElementById('textInput').value;
-            const engine = document.getElementById('engineSelect').value;
+            const engine = document.querySelector('input[name="engineOptions"]:checked').value;
             const voice = document.getElementById('voiceSelect').value
+            console.log(engine);
             fetch('/convert-to-speech', {
                 method: 'POST',
                 headers: {
@@ -157,7 +312,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Voice ID not available. Please select a different voice.'); // Display error message
+                alert('Service is not available. Please select a different voice, engine or try again at another time.'); // Display error message
             });
         });
 
