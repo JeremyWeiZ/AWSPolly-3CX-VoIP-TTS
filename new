@@ -1,0 +1,40 @@
+const fs = require('fs');
+const tmp = require('tmp'); // You need to install the 'tmp' package
+const ffmpeg = require('fluent-ffmpeg');
+
+app.post('/convert-to-speech', (req, res) => {
+    // ... your existing code ...
+
+    polly.synthesizeSpeech(params, (err, data) => {
+        if (err) {
+            console.log(err, err.stack);
+            res.status(500).send('Error');
+        } else if (data && data.AudioStream instanceof Buffer) {
+            // Create a temporary file for the MP3 audio
+            const tmpMp3 = tmp.fileSync({ postfix: '.mp3' });
+            fs.writeFileSync(tmpMp3.name, data.AudioStream);
+
+            // Set response headers
+            res.set({
+                'Content-Type': 'audio/wav',
+                'Content-Disposition': 'attachment; filename="speech.wav"'
+            });
+
+            // Convert the temporary MP3 file to WAV format and stream it
+            ffmpeg(tmpMp3.name)
+                .audioChannels(1)
+                .audioFrequency(8000)
+                .audioCodec('pcm_s16le')
+                .format('wav')
+                .on('error', (err) => {
+                    console.error('An error occurred: ', err.message);
+                    res.status(500).send('Error during conversion');
+                })
+                .on('end', () => {
+                    // Clean up the temporary file
+                    tmpMp3.removeCallback();
+                })
+                .pipe(res, { end: true });
+        }
+    });
+});
