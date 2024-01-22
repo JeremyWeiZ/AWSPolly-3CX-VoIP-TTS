@@ -12,6 +12,7 @@
     "aws-sdk": "^2.1522.0",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
+    "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^5.2.0",
     "fluent-ffmpeg": "^2.1.2"
   },
