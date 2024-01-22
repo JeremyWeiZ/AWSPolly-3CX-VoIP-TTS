@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const AWS = require('aws-sdk');
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegStatic = require('ffmpeg-static');
+const FFmpeg = require('ffmpeg');
+const fs = require('fs');
+const path = require('path');
+const child_process = require('child_process');
 AWS.config.loadFromPath('./config.json');
-ffmpeg.setFfmpegPath(ffmpegStatic);
 
 
 const app = express();
@@ -33,39 +34,54 @@ app.post('/convert-to-speech', (req, res) => {
 
     polly.synthesizeSpeech(params, (err, data) => {
         if (err) {
-            console.log(err, err.stack);
+            console.error(err, err.stack);
             res.status(500).send('Error');
-        } else if (data) {
-            if (data.AudioStream instanceof Buffer) {
-                // Convert MP3 to WAV
-                const stream = require('stream');
-                const pass = new stream.PassThrough();
-                pass.end(data.AudioStream);
+            return;
+        } 
 
-                res.set({
-                    'Content-Type': 'audio/wav',
-                    'Content-Disposition': 'attachment; filename="speech.wav"'
+        if (data && data.AudioStream instanceof Buffer) {
+            // Write the buffer to a file first
+            const mp3FilePath = path.join(__dirname, 'tempSpeech.mp3');
+            fs.writeFileSync(mp3FilePath, data.AudioStream);
+
+            // Construct the FFmpeg command
+            const wavFilePath = path.join(__dirname, 'speech.wav');
+            const command = `ffmpeg -i ${mp3FilePath} -ac 1 -ar 8000 -acodec pcm_s16le -f wav ${wavFilePath}`;
+
+            // Execute the FFmpeg command
+            child_process.exec(command, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`Error: ${error.message}`);
+                    res.status(500).send('Error during conversion');
+                    return;
+                }
+
+                if (stderr) {
+                    console.error(`FFmpeg stderr: ${stderr}`);
+                }
+
+                console.log(`FFmpeg stdout: ${stdout}`);
+                res.sendFile(wavFilePath, {}, function (err) {
+                    if (err) {
+                        console.error('Error sending file:', err);
+                    } else {
+                        console.log('File sent, deleting temporary files...');
+
+                        // Delete the temporary files
+                        fs.unlink(mp3FilePath, (unlinkErr) => {
+                            if (unlinkErr) console.error('Error deleting MP3 file:', unlinkErr);
+                            else console.log('Successfully deleted MP3 file');
+                        });
+
+                        fs.unlink(wavFilePath, (unlinkErr) => {
+                            if (unlinkErr) console.error('Error deleting WAV file:', unlinkErr);
+                            else console.log('Successfully deleted WAV file');
+                        });
+                    }
                 });
-                
-                ffmpeg(pass)
-                    .audioChannels(1)               // Mono channel
-                    .audioFrequency(8000)           // 8 kHz sample rate
-                    .audioCodec('pcm_s16le')       // 16-bit PCM audio in little-endian            
-                    .audioBitrate('128k')           // Set audio bit rate to 128 kbps
-                    .format('wav')                  // Output format as WAV (change if necessary)
-                    .outputOptions([
-                        '-fflags', 'bitexact',      // Ensure bit-exact flags for file
-                        '-flags:v', 'bitexact',     // Ensure bit-exact flags for video (not applicable here but included for completeness)
-                        '-flags:a', 'bitexact',     // Ensure bit-exact flags for audio
-                        '-strict', 'experimental'   // Sometimes required for AAC encoding
-                    ])
-                    .on('error', (err) => {
-                        console.error('An error occurred: ', err.message);
-                        res.status(500).send('Error during conversion');
-                    })
-                    .pipe(res, { end: true });
 
-            }
+                
+            });
         }
     });
 });
