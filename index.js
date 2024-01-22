@@ -48,19 +48,28 @@ app.post('/convert-to-speech', (req, res) => {
                 });
                 
                 ffmpeg(pass)
-                    .audioChannels(1)      // Mono channel
-                    .audioFrequency(8000)  // 8 kHz bit rate
-                    .audioCodec('pcm_s16le')  // 16-bit sampling, little-endian
-                    .format('wav')
+                    .audioChannels(1)               // Mono channel
+                    .audioFrequency(8000)           // 8 kHz sample rate
+                    .audioCodec('pcm_s16le')       // 16-bit PCM audio in little-endian            
+                    .audioBitrate('128k')           // Set audio bit rate to 128 kbps
+                    .format('wav')                  // Output format as WAV (change if necessary)
+                    .outputOptions([
+                        '-fflags', 'bitexact',      // Ensure bit-exact flags for file
+                        '-flags:v', 'bitexact',     // Ensure bit-exact flags for video (not applicable here but included for completeness)
+                        '-flags:a', 'bitexact',     // Ensure bit-exact flags for audio
+                        '-strict', 'experimental'   // Sometimes required for AAC encoding
+                    ])
                     .on('error', (err) => {
                         console.error('An error occurred: ', err.message);
                         res.status(500).send('Error during conversion');
                     })
                     .pipe(res, { end: true });
+
             }
         }
     });
 });
+
 
 const port = 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
