@@ -1,7 +1,7 @@
 # TTS for 3CX
 
 A web app that can handle text-to-speech and audio format conversion for generating voice messages for the 3CX VoIP system.
-# Prerequisites
+## Prerequisites
 
 ffmpeg is required to be installed on the OS level. Fluent-ffmpeg can't generate files that are compatible with 3cx system
 ``` apt-get update && \
@@ -10,12 +10,13 @@ ffmpeg is required to be installed on the OS level. Fluent-ffmpeg can't generate
     rm -rf /var/lib/apt/lists/*
 # Install any needed packages specified in package.json
 ```
-# Installation
+## Installation
 
 ```
 $ npm install
 ```
-# Demo Site
+Alternatively, a Dockerfile is provided for people who use docker.
+## Demo Site
 
 http://13.238.54.16/
 
