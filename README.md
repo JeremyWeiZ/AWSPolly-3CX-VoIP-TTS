@@ -20,5 +20,6 @@ Alternatively, a Dockerfile is provided for people who use docker.
 
 http://13.238.54.16/
 
-![image](https://github.com/JeremyCybersquad/PollyProject/assets/157558995/0ebe5e13-a8d6-46e9-a0e8-33ed8de52ef7)
+![image](https://github.com/JeremyCybersquad/PollyProject/assets/157558995/b757048c-d7b1-4793-a6e4-a225ef243549)
+
 
