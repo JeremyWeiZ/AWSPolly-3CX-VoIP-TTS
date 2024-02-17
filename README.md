@@ -17,9 +17,7 @@ FFmpeg is required to be installed on the OS level. Fluent-ffmpeg can't generate
 $ npm install
 ```
 Alternatively, a Dockerfile is provided for docker users.
-## Demo Site
 
-http://13.238.54.16/
 
 ![image](https://github.com/JeremyWeiZ/AWSPolly-3CX-VoIP-TTS/assets/151583068/7450f259-698a-40c4-aa80-1f207367092d)
 
