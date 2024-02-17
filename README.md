@@ -16,7 +16,7 @@ FFmpeg is required to be installed on the OS level. Fluent-ffmpeg can't generate
 ```
 $ npm install
 ```
-Alternatively, a Dockerfile is provided for people who use docker.
+Alternatively, a Dockerfile is provided for docker users.
 ## Demo Site
 
 http://13.238.54.16/
