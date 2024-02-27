@@ -44,7 +44,8 @@ AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET ACCESS_KEY
 AWS_REGION=YOUR_AWS_REGION
 ```
 Screenshot of demo
-![image](https://github.com/JeremyWeiZ/AWSPolly-3CX-VoIP-TTS/assets/151583068/78952cf7-bfb2-4164-83a7-2ec32cb2d784)
+![image](https://github.com/JeremyWeiZ/AWSPolly-3CX-VoIP-TTS/assets/151583068/c96f61a9-20a4-4343-b1da-8568c631ccf5)
+
 
 
 
