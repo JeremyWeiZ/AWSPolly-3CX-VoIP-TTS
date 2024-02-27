@@ -5,12 +5,50 @@ const FFmpeg = require('ffmpeg');
 const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
-AWS.config.loadFromPath('./config.json');
+// AWS.config.loadFromPath('./config.json');
+const session = require('express-session');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const userSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true }
+  });
+  const User = mongoose.model('User', userSchema);
+  const bcrypt = require('bcryptjs'); // To hash passwords
+const jwt = require('jsonwebtoken'); // For handling JWT tokens
 
 
+
+
+const dbURI = process.env.MONGODB_URI;
+mongoose.connect(dbURI)
+  .then(() => console.log('MongoDB connected…'))
+  .catch(err => console.log(err));
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static('public'));
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+  
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(400).json({ error: 'User not found' });
+    }
+  
+    // Check if the password is correct
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(400).send('Invalid credentials');
+    }
+  
+    // Generate a token (JWT or any other method you prefer)
+    const token = jwt.sign({ id: user._id }, 'your_secret_key', { expiresIn: '10m' });
+  
+    // Send the token to the client
+    res.json({ token });
+  });
 // Configure AWS
 
 const polly = new AWS.Polly();

@@ -1,7 +1,7 @@
 {
   "name": "amazonpolly",
   "version": "1.0.0",
-  "description": "",
+  "description": "A web app that can handle text-to-speech and audio format conversion for generating voice messages for the 3CX VoIP system.\r ## Prerequisites",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,12 +9,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "auth0": "^4.3.1",
     "aws-sdk": "^2.1522.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
-    "ffmpeg": "^0.0.4"
+    "express-session": "^1.18.0",
+    "ffmpeg": "^0.0.4",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.2.0",
+    "passport": "^0.7.0",
+    "passport-auth0": "^1.4.4",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
-  }
+  },
+  "keywords": []
 }
