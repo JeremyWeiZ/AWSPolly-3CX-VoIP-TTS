@@ -5,7 +5,7 @@ const FFmpeg = require('ffmpeg');
 const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
-AWS.config.loadFromPath('./config.json');
+// AWS.config.loadFromPath('./config.json');
 const session = require('express-session');
 const passport = require('passport');
 const mongoose = require('mongoose');
@@ -19,7 +19,8 @@ const jwt = require('jsonwebtoken'); // For handling JWT tokens
 
 
 
-const dbURI = 'mongodb+srv://admin:IAMYGlb0WrSrp3zn@cluster0.yxad1gv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+const dbURI = process.env.MONGODB_URI;
 mongoose.connect(dbURI)
   .then(() => console.log('MongoDB connected…'))
   .catch(err => console.log(err));
